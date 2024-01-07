@@ -5,7 +5,8 @@
   import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
-    getAuth
+    getAuth,
+    deleteUser
   } from 'firebase/auth';
 
   const firebaseConfig = {
@@ -24,7 +25,9 @@
   const signIn = async () => {
     try{
       await signInWithEmailAndPassword(auth, email.value, password.value)
+      //let user = auth.currentUser;
       router.push( { name: "Home" });
+
     } catch (e) {
       console.log(e);
     }
