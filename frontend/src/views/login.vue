@@ -1,30 +1,16 @@
 <script setup>
   import { ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { initializeApp } from 'firebase/app';
-  import {
-    onAuthStateChanged,
-    signInWithEmailAndPassword,
-    getAuth,
-    deleteUser
-  } from 'firebase/auth';
-
-  const firebaseConfig = {
-    apiKey: import.meta.env.VITE_APIKEY,
-    authDomain: import.meta.env.VITE_AUTHDOMAIN
-  };
+  import axios from 'axios';
 
   const router = useRouter();
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app, {});
 
   const email = ref('');
   const password = ref('');
 
   const signIn = async () => {
     try{
-      await signInWithEmailAndPassword(auth, email.value, password.value)
+      await login();
       //let user = auth.currentUser;
       router.push( { name: "Home" });
 
@@ -32,6 +18,20 @@
       console.log(e);
     }
   }
+
+  const login = async () => {
+    try {
+      const apiUrl = 'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/proxyFunction';
+      const resp = await axios.post(apiUrl, {
+          email: email.value,
+          password: password.value,
+      });
+      console.log(resp.data)
+    } catch (e) {
+      throw e;
+    }
+  }
+
 </script>
 
 <template>
