@@ -8,25 +8,23 @@
   const email = ref('');
   const password = ref('');
 
-  const signIn = async () => {
-    try{
-      await login();
-      //let user = auth.currentUser;
-      router.push( { name: "Home" });
-
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
   const login = async () => {
     try {
       const apiUrl = 'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/proxyFunction';
-      const resp = await axios.post(apiUrl, {
+      const req = await axios.post(apiUrl, {
           email: email.value,
           password: password.value,
       });
-      console.log(resp.data)
+      const user = req.data;
+      const token = user.user.user.stsTokenManager.accessToken;
+      const resp = await axios.post(
+        'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/hello',
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}`}
+	}
+      );
+      console.log(resp.data);
     } catch (e) {
       throw e;
     }
@@ -38,7 +36,7 @@
   <div class="login-container">
     <div class="login-card">
       <h1>Login</h1>
-      <form @submit.prevent="login">
+      <form @submit.prevent="">
         <label for="email">Email:</label>
         <input type="text" v-model="email" id="email" required />
 
