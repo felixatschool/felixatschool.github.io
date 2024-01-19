@@ -13,9 +13,14 @@ const router = createRouter({
     },
     {
       path: '/',
-      name: 'Home',
+      name: 'home',
       component: Home
     },
+    { 
+      path: '/:catchAll(.*)',
+      redirect: 
+	{ name: 'login' }
+    }
   ]
 })
 
