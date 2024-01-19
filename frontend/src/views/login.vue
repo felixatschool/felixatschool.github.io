@@ -1,51 +1,44 @@
 <script setup>
   import { ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import axios from 'axios';
+  import * as Backend from '../composables/backend.js';
 
   const router = useRouter();
 
   const email = ref('');
   const password = ref('');
+  const loading = ref(true);
 
-  const signIn = async () => {
-    try{
-      await login();
-      //let user = auth.currentUser;
-      router.push( { name: "Home" });
-
-    } catch (e) {
-      console.log(e);
+  onMounted( async () => {
+    if(await Backend.isAuth()) {
+      router.push( { name: "home" });
     }
-  }
+    loading.value = false;
+  });
 
   const login = async () => {
     try {
-      const apiUrl = 'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/proxyFunction';
-      const resp = await axios.post(apiUrl, {
-          email: email.value,
-          password: password.value,
-      });
-      console.log(resp.data)
+      await Backend.login(email.value, password.value);
+      router.push( { name: "home" });
     } catch (e) {
-      throw e;
+      console.log(e);
     }
   }
 
 </script>
 
 <template>
-  <div class="login-container">
+  <div v-if="!loading" class="login-container">
     <div class="login-card">
       <h1>Login</h1>
-      <form @submit.prevent="login">
+      <form @submit.prevent="">
         <label for="email">Email:</label>
         <input type="text" v-model="email" id="email" required />
 
         <label for="password">Password:</label>
         <input type="password" v-model="password" id="password" required />
 
-        <button @click="signIn()">Login</button>
+        <button @click="login()">Login</button>
       </form>
     </div>
   </div>
