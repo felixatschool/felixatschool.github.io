@@ -52,6 +52,6 @@ const getAccessToken = () => {
   return Cookies.get('accessToken');
 };
 
-const removeAccessToken = () => {
+export const removeAccessToken = () => {
   Cookies.remove('accessToken');
 };

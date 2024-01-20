@@ -1,13 +1,24 @@
 <script setup>
-  import { ref, onMounted } from 'vue';
+  import { ref, reactive, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import * as Backend from '../composables/backend.js';
+  import { library } from "@fortawesome/fontawesome-svg-core";
 
   const router = useRouter();
 
   const email = ref('');
   const password = ref('');
   const loading = ref(true);
+  const signin = ref(true);
+  const err = ref('');
+  const page = reactive({
+    title: "Sign in",
+    action: "login",
+    btn: "create an account",
+    load: false,
+    fn: () => login()
+  });
+
 
   onMounted( async () => {
     if(await Backend.isAuth()) {
@@ -18,10 +29,34 @@
 
   const login = async () => {
     try {
+      page.load = true;
+      validateInput();
       await Backend.login(email.value, password.value);
       router.push( { name: "home" });
     } catch (e) {
+      page.load = false;
+      err.value = e;
       console.log(e);
+    }
+  }
+
+  const toggleMode = () => {
+    if(page.title == "Sign up") {
+      page.btn = "create an account";
+      page.title = "Sign in";
+      page.action = "login";
+      page.fn = () => login();
+    } else {
+      page.btn = "login";
+      page.title = "Sign up";
+      page.action = "create account";
+      page.fn = () => login();
+    }
+  };
+
+  const validateInput = () => {
+    if( email.value.length == 0 || password.value.length == 0){
+      throw 'Please enter email and password';
     }
   }
 
@@ -29,17 +64,18 @@
 
 <template>
   <div v-if="!loading" class="login-container">
-    <div class="login-card">
-      <h1>Login</h1>
+    <div class="login-box">
+      <h2> {{ page.title }} </h2>
+      <div class="err"> {{ err }} </div>
       <form @submit.prevent="">
-        <label for="email">Email:</label>
-        <input type="text" v-model="email" id="email" required />
-
-        <label for="password">Password:</label>
-        <input type="password" v-model="password" id="password" required />
-
-        <button @click="login()">Login</button>
+        <input type="text" v-model="email" required placeholder="email"/>
+        <input type="password" v-model="password" required placeholder="password"/>
       </form>
+        <button v-if="!page.load" @click="page.fn()"> {{ page.action }} </button>
+        <button v-else> 
+	  <font-awesome-icon icon="fa-solid fa-spinner" spin />
+        </button > 
+        <div class="action"> <h4 @click="toggleMode()" class="mode"> {{ page.btn }} </h4> </div>
     </div>
   </div>
 </template>
@@ -47,54 +83,66 @@
 <style scoped>
   .login-container {
     display: flex;
-    align-items: center;
     justify-content: center;
-    height: 100vh;
-    background-color: #f0f0f0;
+    height: 90vh;
   }
 
-  .login-card {
-    max-width: 300px;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  .login-box {
+    margin:0 auto;
+    margin-top:35%;
+    width:75%;
   }
 
-  h1 {
-    font-size: 24px;
-    text-align: center;
-    margin-bottom: 20px;
-    color:black;
+  h4 {
+    cursor:pointer;
   }
 
-  form {
-    display: flex;
-    flex-direction: column;
+  .err {
+    display:inline-block;
+    margin-top:25px;
+    min-height:1.4rem;
+    display:flex;
+    justify-content:center;
+    font-size:0.9rem;
   }
 
-  label {
-    margin-bottom: 8px;
-    color:black;
+  .action {
+    width:100%;
+    display:flex;
+    justify-content:center;
+    position:absolute;
+    left:0;
+    bottom:10vh;
+  }
+
+  h2 {
+    color: #333;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size:2rem;
   }
 
   input {
+    width: 100%;
     padding: 10px;
-    margin-bottom: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 2px solid #ccc;
+    border-radius: 16px;
+    margin:3px auto;
+    text-align:center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
   button {
-    background-color: #02559f;
-    color: #fff;
+    width: 60%;
+    display:block;
     padding: 10px;
+    margin:10px auto;
     border: none;
-    border-radius: 4px;
+    border-radius: 16px;
+    background-color: #be2ed6;
+    color: #fff;
     cursor: pointer;
-    transition: background-color 0.3s;
-  }
-
-  button:hover {
-    background-color: #45a049;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    font-size:0.9rem;
   }
 </style>

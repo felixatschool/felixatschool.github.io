@@ -8,14 +8,28 @@
 
   onMounted( async () => {
     if(!await Backend.isAuth()){
-      router.push( { name: "login" });
+      router.push( { name: 'login' });
     };
     loading.value = false;
   });
+
+  const signout = () => {
+    Backend.removeAccessToken();
+    router.push( { name: 'login' });
+  }
 </script>
 
 <template>
   <div v-if="!loading">
-    <h2> home </h2>
+    <h2> khdr. </h2>
+    <button @click="signout()">sign out</button>
   </div>
 </template>
+
+<style scoped>
+h2 {
+  font-family: 'Quicksand', sans-serif; /* Default weight (300) */
+  font-weight: 700; /* Bold weight (700) */
+  font-size:4rem;
+}
+</style>
