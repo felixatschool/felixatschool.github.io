@@ -82,15 +82,17 @@
 
 <style scoped>
   .login-container {
-    display: flex;
-    justify-content: center;
-    height: 90vh;
+    display:flex;
+    justify-content:center;
+    width:100vw;
+    height:90vh;
   }
 
   .login-box {
+    max-width:420px;
+    width:75vw;
     margin:0 auto;
-    margin-top:35%;
-    width:75%;
+    margin-top:15vh;
   }
 
   h4 {
@@ -100,7 +102,7 @@
   .err {
     display:inline-block;
     margin-top:25px;
-    min-height:1.4rem;
+    min-height:1.5rem;
     display:flex;
     justify-content:center;
     font-size:0.9rem;
@@ -108,11 +110,13 @@
 
   .action {
     width:100%;
-    display:flex;
-    justify-content:center;
+  }
+
+  .mode {
     position:absolute;
-    left:0;
-    bottom:10vh;
+    bottom:10%;
+    left:50%;
+    transform:translate(-50%, -50%);
   }
 
   h2 {
