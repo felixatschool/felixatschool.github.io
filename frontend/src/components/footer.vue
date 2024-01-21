@@ -1,6 +1,21 @@
+<script setup>
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
+
+  const goto = (page) => {
+    router.push( { name: page });
+  };
+
+</script>
 <template>
   <div class="view">
-    <h4>  </h4>
+    <h4> khdr. </h4>
+    <div class="container">
+      <h5 @click="goto('recipe')"> recipe </h5>
+      <h5 @click="goto('calendar')"> calendar </h5>
+      <h5 @click="goto('list')"> list </h5>
+    </div>
   </div>
 </template>
 
@@ -8,7 +23,22 @@
 
   .view {
     display:block;
-    height:10vh;
+    height:5vh;
+    width:100vw;
+    position:absolute;
+    bottom:7vh;
+    left:15vw;
+  }
+
+  .container {
+    display:flex;
+    justify-content: space-evenly;
+    width:70vw;
+    padding: 4px;
+    border: 2px solid #ccc;
+    border-radius: 16px;
+    text-align:center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
   h4 {
