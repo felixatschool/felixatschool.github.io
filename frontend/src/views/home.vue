@@ -6,7 +6,13 @@
   import * as Backend from '../composables/backend.js';
 
   const router = useRouter();
-  const loading = ref(false);
+  const loading = ref(true);
+  const user = ref();
+
+  onMounted(async () => {
+    user.value = await Backend.fetchUser();
+    loading.value = false;
+  });
 
   const signout = () => {
     Backend.removeAccessToken();
@@ -19,8 +25,12 @@
   <Header />
   <div>
     <Header title="Home"/>
-    <div class="wrapper">
-      <button class="submit-button" @click="signout()">sign out</button>
+    <div v-if="!loading" class="wrapper">
+      <div class="content">
+	<button class="submit-button" @click="signout()">sign out</button>
+	<p> {{ user.name }} </p>
+	<p> {{ user.email }} </p>
+      </div>
     </div>
   </div>
   <Footer />
@@ -31,6 +41,17 @@
     width:100vw;
     display:flex;
     justify-content:center;
+    height:65vh;
+    overflow:auto;
+  }
+
+  .content {
+    width:80vw;
+    margin:0 auto;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    padding: 20px;
   }
 
   .submit-button {
