@@ -7,11 +7,7 @@
 
   const router = useRouter();
   const loading = ref(false);
-
-  const signout = () => {
-    Backend.removeAccessToken();
-    router.push( { name: 'login' });
-  }
+  const recipes = ref([]);
 
   const recipe = reactive({
     title: '',
@@ -21,8 +17,14 @@
     prepTime: 0,
   });
 
+  onMounted( async () => {
+    recipes.value = await Backend.fetchRecipes();
+    loading.value = false;
+  });
+
   const ingredient = ref('');
   const ingredientTag = ref('');
+  const showCreateRecipeForm = ref(false);
 
   const addIngredient = () => {
     let emptyLabel = false;
@@ -57,71 +59,85 @@
 
   const saveRecipe = async () => {
     await Backend.saveRecipe(recipe);
+    recipes.value = await Backend.fetchRecipes();
+    toggleCreateRecipeForm();
+  };
+
+  const toggleCreateRecipeForm = () => {
+    showCreateRecipeForm.value = !showCreateRecipeForm.value;
   };
 </script>
 
 <template>
-  <div class="container">
-    <Header />
-    <div class="wrapper">
-      <h1>Create Recipe</h1>
-      <form @submit.prevent="saveRecipe">
-	<label for="title">Title:</label>
-	<input v-model="recipe.title" type="text" id="title" required />
-
-	<!--
-	<label for="tags">Tags:</label>
-	<input v-model="recipe.tags" type="text" id="tags" />
-	-->
-
-	<label for="ingredients">Ingredients:</label>
-	<div v-for="(ingredient, index) in recipe.ingredients" :key="index" class="ingredients-input">
-	  <input class="input-ing" v-model="ingredient.name" type="text" placeholder="new ingredient" required />
-	  <div class="counter">
-	    <button type="button" @click="incrementQuantity(index)">+</button>
-	    <span>{{ ingredient.quantity }}</span>
-	    <button type="button" @click="decrementQuantity(index)">-</button>
+  <div>
+    <Header title="recipes"/>
+    <div v-if="!loading" class="wrapper">
+      <div class="recipes">
+	<div v-if="showCreateRecipeForm">
+	  <form @submit.prevent="saveRecipe">
+	  <label for="title">Title:</label>
+	  <input v-model="recipe.title" type="text" id="title" required />
+	  <label for="ingredients">Ingredients:</label>
+	  <div v-for="(ingredient, index) in recipe.ingredients" :key="index" class="ingredients-input">
+	    <input class="input-ing" v-model="ingredient.name" type="text" placeholder="new ingredient" required />
+	    <div class="counter">
+	      <button type="button" @click="incrementQuantity(index)">+</button>
+	      <span>{{ ingredient.quantity }}</span>
+	      <button type="button" @click="decrementQuantity(index)">-</button>
+	    </div>
+	    <button type="button" @click="removeIngredient(index)" class="remove-button">&#10006;</button>
 	  </div>
-	  <button type="button" @click="removeIngredient(index)" class="remove-button">&#10006;</button>
+	  <button class="submit-button" @click.prevent="addIngredient">Add Ingredient</button>
+	  <label for="prepTime">Preparation Time (minutes):</label>
+	  <input v-model="recipe.prepTime" type="number" id="prepTime" required />
+
+	  <label for="servings">Servings:</label>
+	  <input v-model="recipe.servings" type="number" id="servings" required />
+
+	  <button class="submit-button" type="submit">Save Recipe</button>
+	  </form>
 	</div>
-	<button class="submit-button" @click.prevent="addIngredient">Add Ingredient</button>
 
+	<div v-else-if="recipes.length === 0">No recipes yet. Create one now!</div>
 
-	<label for="prepTime">Preparation Time (minutes):</label>
-	<input v-model="recipe.prepTime" type="number" id="prepTime" required />
-
-	<label for="servings">Servings:</label>
-	<input v-model="recipe.servings" type="number" id="servings" required />
-
-	<button class="submit-button" type="submit">Save Recipe</button>
-      </form>
+	<div v-else >
+	  <div v-for="(recipe, index) in recipes" :key="index" class="recipe-card" @click="viewRecipeDetails(index)">
+	    <h4 class="title">{{ recipe.id }}</h4>
+	    <p>Prep Time: {{ recipe.data.prepTime }} minutes</p>
+	    <p>Servings: {{ recipe.data.servings }}</p>
+	  </div>
+	  <button class="submit-button" @click="toggleCreateRecipeForm">Create Recipe</button>
+	</div>
+      </div>
     </div>
-  <Footer />
+    <Footer />
   </div>
 </template>
 
 <style scoped>
 
-  .container {
+  .wrapper {
     width:100vw;
     display:flex;
     justify-content:center;
-    padding-top:50px;
+    max-height:75vh;
+    overflow:auto;height:75vh;
   }
 
-  form {
-    max-width: 400px;
-    width: 100%;
-    padding: 20px;
-    background-color: #fff;
+  .recipes {
+    width:80vw;
+    margin:0 auto;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    padding: 20px;
   }
 
-  h1 {
-    text-align: center;
-    color: #333;
-    padding-bottom:10px;
+  .recipe-card  {
+    width:100%;
+    margin:0 auto;
+    border-bottom:2px solid #eee;
+    padding:8px;
   }
 
   label {
@@ -141,6 +157,10 @@
     font-size: 16px;
   }
 
+  h4 {
+    font-size: 1.3rem;
+  }
+
   .ingredients-input {
     display: flex;
     align-items: center;
@@ -154,10 +174,9 @@
   .ingredients-input input {
     flex: 1;
     border: none;
-    outline: none;
-    padding: 8px;
     box-sizing: border-box;
     font-size: 16px;
+    margin-bottom:0;
   }
 
  .ingredients-input button {
@@ -166,7 +185,6 @@
     outline: none;
     cursor: pointer;
     padding: 8px;
-    margin-left: 8px;
     color: #555;
     font-size:18px;
   }
@@ -199,6 +217,12 @@
     cursor: pointer;
     font-size: 18px;
     transition: background-color 0.3s;
+  }
+
+  p {
+    font-style: italic;
+    font-size: .9rem;
+    color: #666;
   }
 
 </style>

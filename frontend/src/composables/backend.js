@@ -73,10 +73,8 @@ export const saveRecipe = async (recipe) => {
 }
 
 export const fetchRecipes = async () => {
-  console.log('fetchRecipes');
   try {
     const token = getAccessToken();
-    console.log(token);
     if(token) {
       const resp = await axios.get(
 	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/read',
@@ -100,6 +98,89 @@ export const fetchRecipes = async () => {
   }
 }
 
+export const fetchTheList = async () => {
+  try {
+    const token = getAccessToken();
+    if(token) {
+      const resp = await axios.get(
+	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/getTheList',
+	{
+	  headers: { Authorization: `${token}`}
+	}
+      );
+      
+      if(resp.status == 200) {
+	return resp.data;
+      } else {
+	throw 'error';
+      }
+    } else {
+      throw 'User is not authenticated';
+    }
+  } catch (e) {
+    removeAccessToken();
+    console.log(e);
+    return false;
+  }
+}
+
+export const fetchCalendar = async () => {
+  try {
+    const token = getAccessToken();
+    if(token) {
+      const resp = await axios.get(
+	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/getCalendar',
+	{
+	  headers: { Authorization: `${token}`}
+	}
+      );
+      
+      if(resp.status == 200) {
+	return resp.data;
+      } else {
+	throw 'error';
+      }
+    } else {
+      throw 'User is not authenticated';
+    }
+  } catch (e) {
+    removeAccessToken();
+    console.log(e);
+    return false;
+  }
+}
+
+export const saveCalendar = async (title, recipe, cook) => {
+  try {
+    const token = getAccessToken();
+    if(token) {
+      const data = {
+	id: title,
+	recipe: recipe,
+	cook: cook
+      }
+      const resp = await axios.post(
+	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/saveCalendar', data,
+	{
+	  headers: { Authorization: `${token}`}
+	}
+      );
+      
+      if(resp.status == 200) {
+	console.log(resp);
+	return true;
+      } else {
+	throw 'error';
+      }
+    } else {
+      throw 'User is not authenticated';
+    }
+  } catch (e) {
+    removeAccessToken();
+    console.log(e);
+    return false;
+  }
+}
 
 
 export const setAccessToken = (token) => {

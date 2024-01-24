@@ -17,9 +17,9 @@
 
 <template>
   <Header />
-  <div class="container">
+  <div>
+    <Header title="Home"/>
     <div class="wrapper">
-      <h2> Home </h2>
       <button class="submit-button" @click="signout()">sign out</button>
     </div>
   </div>
@@ -27,13 +27,7 @@
 </template>
 
 <style scoped>
-  h2 {
-    font-family:'Quicksand', sans-serif;
-    font-weight:700;
-    font-size:4rem;
-  }
-
-  .container {
+  .wrapper {
     width:100vw;
     display:flex;
     justify-content:center;

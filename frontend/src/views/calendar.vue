@@ -6,39 +6,31 @@
   import RecipeItem from '../components/recipeItem.vue'
 
   const loading = ref(true);
+  const calendar = ref();
   const recipes = ref();
 
   onMounted( async () => {
+    calendar.value = await Backend.fetchCalendar();
     recipes.value = await Backend.fetchRecipes();
     loading.value = false;
   });
 
 </script>
 <template>
-  <div class="container">
-    <Header />
-    <h2> calendar </h2>
+  <div>
+    <Header title="calendar"/>
     <div v-if="!loading" class="wrapper">
-      <RecipeItem v-for="(item, index) in recipes" :key="index" :recipe=item />
+      <RecipeItem v-for="item in calendar.documents" :key="item.id" :data="item" :recipes="recipes"/>
     </div>
     <Footer />
   </div>
 </template>
 
 <style scoped>
-  h2 {
-    color: #333;
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 700;
-    font-size:2rem;
-    padding-top:10vh;
-    padding-left:10vw;
-    padding-bottom:5vh;
-  }
-
   .wrapper {
     width:80vw;
     margin:0 auto;
+    max-height:75vh;
+    overflow:auto;
   }
-
 </style>

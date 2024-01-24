@@ -6,29 +6,29 @@
   import IngredientItem from '../components/ingredientItem.vue'
 
   const loading = ref(true);
-  const recipes = ref();
-  const ingredients = [];
+  const ingredients = ref([]);
+  const list = ref();
 
   onMounted( async () => {
-    recipes.value = await Backend.fetchRecipes();
-    recipes.value.forEach( recipe => {
-      recipe.data.ingredients.forEach( ing => {
-	const exist = ingredients.find(item => item.name === ing.name);
-	if (exist) {
-	  exist.count += ing.quantity;
-	} else {
-	  ingredients.push({name: ing.name, quantity: ing.quantity});
-	}
+    const recipes = await Backend.fetchTheList();
+    const ingredientsMap = new Map();
+
+    recipes.ingredientsList.forEach(recipe => {
+      recipe.ingredients.forEach(({ name, quantity }) => {
+        const existingQuantity = ingredientsMap.get(name) || 0;
+        ingredientsMap.set(name, existingQuantity + quantity);
       });
     });
+
+    const list = Array.from(ingredientsMap).map(([name, quantity]) => ({ name, quantity }));
+    ingredients.value = list;
     loading.value = false;
   });
 
 </script>
 <template>
-  <div class="container">
-    <Header />
-    <h2> list </h2>
+  <div>
+    <Header title="the list"/>
     <div v-if="!loading" class="wrapper">
       <IngredientItem v-for="(item, index) in ingredients" :key="index" :ingredient=item />
     </div>
@@ -37,19 +37,11 @@
 </template>
 
 <style scoped>
-  h2 {
-    color: #333;
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 700;
-    font-size:2rem;
-    padding-top:10vh;
-    padding-bottom:5vh;
-    padding-left:10vw;
-  }
-
   .wrapper {
     width:80vw;
     margin:0 auto;
+    max-height:75vh;
+    overflow:auto;
   }
 
 </style>

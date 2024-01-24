@@ -1,6 +1,4 @@
 <script setup>
-  import { defineProps } from 'vue';
-
   const props = defineProps({
     ingredient: Object
   });
@@ -22,14 +20,16 @@
 <style scoped>
   li {
     list-style: none;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
 
   .card {
     border: 1px solid #ccc;
-    padding: 16px;
+    padding-top:6px;
+    padding-left:16px;
+    padding-bottom: 6px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .title {
@@ -38,6 +38,7 @@
 
   .quantity {
     font-style: italic;
+    font-size: .9rem;
     color: #666;
   }
 </style>

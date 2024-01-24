@@ -10,12 +10,12 @@
 </script>
 <template>
   <div class="view">
-    <h4> khdr. </h4>
     <div class="container">
       <h5 @click="goto('recipe')"> recipe </h5>
       <h5 @click="goto('calendar')"> calendar </h5>
       <h5 @click="goto('list')"> list </h5>
     </div>
+    <!--<h4> khdr. </h4>-->
   </div>
 </template>
 
@@ -26,14 +26,14 @@
     height:5vh;
     width:100vw;
     position:absolute;
-    bottom:7vh;
-    left:15vw;
+    bottom:35px;
   }
 
   .container {
+    width:70%;
+    margin:0 auto;
     display:flex;
     justify-content: space-evenly;
-    width:70vw;
     padding: 4px;
     border: 2px solid #ccc;
     border-radius: 16px;
@@ -46,9 +46,8 @@
     font-family: 'Quicksand', sans-serif; /* Default weight (300) */
     font-weight: 700; /* Bold weight (700) */
     font-size:2rem;
-    position:absolute;
+    position:sticky;
     bottom:0;
-    right:0;
   }
 
 </style>
