@@ -15,14 +15,13 @@
     title: "Sign in",
     action: "login",
     btn: "create an account",
-    load: false,
-    fn: () => login()
+    load: false
   });
 
 
   onMounted( async () => {
     if(await Backend.isAuth()) {
-      router.push( { name: "home" });
+      router.push( { name: "recipe" });
     }
     loading.value = false;
   });
@@ -31,7 +30,7 @@
     try {
       page.load = true;
       validateInput();
-      await Backend.login(email.value, password.value);
+      await Backend.login(email.value, password.value, page.action);
       router.push( { name: "home" });
     } catch (e) {
       page.load = false;
@@ -45,12 +44,10 @@
       page.btn = "create an account";
       page.title = "Sign in";
       page.action = "login";
-      page.fn = () => login();
     } else {
       page.btn = "login";
       page.title = "Sign up";
       page.action = "create account";
-      page.fn = () => login();
     }
   };
 
@@ -71,7 +68,7 @@
         <input type="text" v-model="email" required placeholder="email"/>
         <input type="password" v-model="password" required placeholder="password"/>
       </form>
-        <button v-if="!page.load" @click="page.fn()"> {{ page.action }} </button>
+        <button v-if="!page.load" @click="login()"> {{ page.action }} </button>
         <button v-else> 
 	  <font-awesome-icon icon="fa-solid fa-spinner" spin />
         </button > 
