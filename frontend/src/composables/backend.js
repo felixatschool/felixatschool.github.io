@@ -102,7 +102,7 @@ export const fetchRecipes = async () => {
     const token = getAccessToken();
     if(token) {
       const resp = await axios.get(
-	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/read',
+	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/getUserRecipe',
 	{
 	  headers: { Authorization: `${token}`}
 	}
