@@ -21,7 +21,7 @@
 
   onMounted( async () => {
     if(await Backend.isAuth()) {
-      router.push( { name: "recipe" });
+      router.push( { name: "home" });
     }
     loading.value = false;
   });

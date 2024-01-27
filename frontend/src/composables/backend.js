@@ -45,6 +45,32 @@ export const isAuth = async () => {
   }
 }
 
+export const fetchUser = async () => {
+  try {
+    const token = getAccessToken();
+    if(token) {
+      const resp = await axios.get(
+	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/getUser',
+	{
+	  headers: { Authorization: `${token}`}
+	}
+      );
+      
+      if(resp.status == 200) {
+	return resp.data.resp;
+      } else {
+	throw 'error';
+      }
+    } else {
+      throw 'User is not authenticated';
+    }
+  } catch (e) {
+    removeAccessToken();
+    console.log(e);
+    return false;
+  }
+}
+
 export const saveRecipe = async (recipe) => {
   try {
     const token = getAccessToken();
@@ -57,7 +83,6 @@ export const saveRecipe = async (recipe) => {
       );
       
       if(resp.status == 200) {
-	console.log(resp);
 	return true;
       } else {
 	throw 'error';
@@ -77,7 +102,7 @@ export const fetchRecipes = async () => {
     const token = getAccessToken();
     if(token) {
       const resp = await axios.get(
-	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/read',
+	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/getUserRecipe',
 	{
 	  headers: { Authorization: `${token}`}
 	}
