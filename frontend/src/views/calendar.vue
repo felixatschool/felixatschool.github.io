@@ -5,22 +5,19 @@
   import Footer from '../components/footer.vue'
   import RecipeItem from '../components/recipeItem.vue'
 
-  const loading = ref(true);
-  const calendar = ref();
-  const recipes = ref();
-
-  onMounted( async () => {
-    calendar.value = await Backend.fetchCalendar();
-    recipes.value = await Backend.fetchRecipes();
-    loading.value = false;
+  const props = defineProps({
+    data: Object,
   });
+
+  const recipes = props.data.recipes;
+  const calendar = props.data.calendar.documents;
 
 </script>
 <template>
   <div>
     <Header title="calendar"/>
-    <div v-if="!loading" class="wrapper">
-      <RecipeItem v-for="item in calendar.documents" :key="item.id" :data="item" :recipes="recipes"/>
+    <div class="wrapper">
+      <RecipeItem v-for="item in calendar" :key="item.id" :data="item" :recipes="recipes"/>
     </div>
     <Footer />
   </div>

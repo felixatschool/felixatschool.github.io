@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import * as Store from './store.js';
 
 export const login = async (email, password, action) => {
     try {
@@ -9,18 +9,17 @@ export const login = async (email, password, action) => {
 	  password: password,
 	  action: action,
       });
-
-      const user = req.data;
-      const token = user.user.user.stsTokenManager.accessToken;
-      setAccessToken(token);
+      Store.setAccessToken(req.data.user.user.stsTokenManager.accessToken);
+      await fetchData();
     } catch (e) {
+      Store.removeUser();
       throw e;
     }
 };
 
 export const isAuth = async () => {
   try {
-    const token = getAccessToken();
+    const token = Store.getAccessToken();
     if(token) {
       const resp = await axios.post(
 	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/hello', {},
@@ -30,24 +29,21 @@ export const isAuth = async () => {
       );
       
       if(resp.status == 200) {
-	console.log('token is valid');
-	return true;
+	await fetchData();
       } else {
-	throw 'token is not valid';
+	throw 'token has expired';
       }
     } else {
       throw 'User is not authenticated';
     }
   } catch (e) {
-    removeAccessToken();
-    console.log(e);
-    return false;
+    Store.removeUser();
   }
 }
 
 export const fetchUser = async () => {
   try {
-    const token = getAccessToken();
+    const token = Store.getAccessToken();
     if(token) {
       const resp = await axios.get(
 	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/getUser',
@@ -57,7 +53,7 @@ export const fetchUser = async () => {
       );
       
       if(resp.status == 200) {
-	return resp.data.resp;
+	Store.setUser(token, resp.data.resp);
       } else {
 	throw 'error';
       }
@@ -65,15 +61,40 @@ export const fetchUser = async () => {
       throw 'User is not authenticated';
     }
   } catch (e) {
-    removeAccessToken();
+    Store.removeUser();
+    return false;
+  }
+}
+
+export const fetchData = async () => {
+  try {
+    const token = Store.getAccessToken();
+    if(token) {
+      const resp = await axios.get(
+	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/getData',
+	{
+	  headers: { Authorization: `${token}`}
+	}
+      );
+      if(resp.status == 200) {
+	Store.setData(token, resp.data.data);
+      } else {
+	throw 'error';
+      }
+    } else {
+      throw 'User is not authenticated';
+    }
+  } catch (e) {
+    Store.removeUser();
     console.log(e);
     return false;
   }
 }
 
+
 export const saveRecipe = async (recipe) => {
   try {
-    const token = getAccessToken();
+    const token = Store.getAccessToken();
     if(token) {
       const resp = await axios.post(
 	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/write', {recipe: recipe},
@@ -83,6 +104,7 @@ export const saveRecipe = async (recipe) => {
       );
       
       if(resp.status == 200) {
+	await fetchRecipes();
 	return true;
       } else {
 	throw 'error';
@@ -91,7 +113,7 @@ export const saveRecipe = async (recipe) => {
       throw 'User is not authenticated';
     }
   } catch (e) {
-    removeAccessToken();
+    Store.removeUser();
     console.log(e);
     return false;
   }
@@ -99,7 +121,7 @@ export const saveRecipe = async (recipe) => {
 
 export const fetchRecipes = async () => {
   try {
-    const token = getAccessToken();
+    const token = Store.getAccessToken();
     if(token) {
       const resp = await axios.get(
 	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/getUserRecipe',
@@ -109,7 +131,7 @@ export const fetchRecipes = async () => {
       );
       
       if(resp.status == 200) {
-	return resp.data.documents;
+	Store.setRecipes(resp.data.documents);
       } else {
 	throw 'error';
       }
@@ -117,7 +139,7 @@ export const fetchRecipes = async () => {
       throw 'User is not authenticated';
     }
   } catch (e) {
-    removeAccessToken();
+    Store.removeUser();
     console.log(e);
     return false;
   }
@@ -125,7 +147,7 @@ export const fetchRecipes = async () => {
 
 export const fetchTheList = async () => {
   try {
-    const token = getAccessToken();
+    const token = Store.getAccessToken();
     if(token) {
       const resp = await axios.get(
 	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/getTheList',
@@ -135,7 +157,7 @@ export const fetchTheList = async () => {
       );
       
       if(resp.status == 200) {
-	return resp.data;
+	Store.setList(resp.data.ingredientsList);
       } else {
 	throw 'error';
       }
@@ -143,7 +165,7 @@ export const fetchTheList = async () => {
       throw 'User is not authenticated';
     }
   } catch (e) {
-    removeAccessToken();
+    Store.removeUser();
     console.log(e);
     return false;
   }
@@ -151,7 +173,7 @@ export const fetchTheList = async () => {
 
 export const fetchCalendar = async () => {
   try {
-    const token = getAccessToken();
+    const token = Store.getAccessToken();
     if(token) {
       const resp = await axios.get(
 	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/getCalendar',
@@ -161,7 +183,7 @@ export const fetchCalendar = async () => {
       );
       
       if(resp.status == 200) {
-	return resp.data;
+	Store.setCalendar(resp.data.documents);
       } else {
 	throw 'error';
       }
@@ -169,7 +191,7 @@ export const fetchCalendar = async () => {
       throw 'User is not authenticated';
     }
   } catch (e) {
-    removeAccessToken();
+    Store.removeUser();
     console.log(e);
     return false;
   }
@@ -177,7 +199,7 @@ export const fetchCalendar = async () => {
 
 export const saveCalendar = async (title, recipe, cook) => {
   try {
-    const token = getAccessToken();
+    const token = Store.getAccessToken();
     if(token) {
       const data = {
 	id: title,
@@ -192,7 +214,8 @@ export const saveCalendar = async (title, recipe, cook) => {
       );
       
       if(resp.status == 200) {
-	console.log(resp);
+	await fetchCalendar();
+	await fetchTheList();
 	return true;
       } else {
 	throw 'error';
@@ -201,21 +224,8 @@ export const saveCalendar = async (title, recipe, cook) => {
       throw 'User is not authenticated';
     }
   } catch (e) {
-    removeAccessToken();
+    Store.removeUser();
     console.log(e);
     return false;
   }
 }
-
-
-export const setAccessToken = (token) => {
-  Cookies.set('accessToken', token);
-};
-
-const getAccessToken = () => {
-  return Cookies.get('accessToken');
-};
-
-export const removeAccessToken = () => {
-  Cookies.remove('accessToken');
-};

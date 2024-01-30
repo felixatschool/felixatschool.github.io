@@ -5,15 +5,19 @@
   import Footer from '../components/footer.vue'
   import IngredientItem from '../components/ingredientItem.vue'
 
+  const props = defineProps({
+    data: Object,
+  });
+
   const loading = ref(true);
   const ingredients = ref([]);
   const list = ref();
 
   onMounted( async () => {
-    const recipes = await Backend.fetchTheList();
+    const recipes = props.data.list.documents;
     const ingredientsMap = new Map();
 
-    recipes.ingredientsList.forEach(recipe => {
+    recipes.forEach(recipe => {
       recipe.ingredients.forEach(({ name, quantity }) => {
         const existingQuantity = ingredientsMap.get(name) || 0;
         ingredientsMap.set(name, existingQuantity + quantity);
@@ -25,7 +29,7 @@
     loading.value = false;
   });
 
-</script>
+</Script>
 <template>
   <div>
     <Header title="the list"/>

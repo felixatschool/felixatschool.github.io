@@ -1,25 +1,25 @@
 <script setup>
-  import { ref, reactive, onMounted } from 'vue';
+  import { ref, reactive, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import * as Backend from '../composables/backend.js';
   import Header from '../components/header.vue'
   import Footer from '../components/footer.vue'
 
+  const props = defineProps({
+    data: Object,
+  });
+
   const router = useRouter();
   const loading = ref(false);
-  const recipes = ref([]);
+  const user = props.data.user;
+  const recipes = props.data.recipes;
 
   const recipe = reactive({
     title: '',
     tags: '',
     ingredients: [{ name: '', quantity: 1, tag: 'none' }],
-    servings: 0,
-    prepTime: 0,
-  });
-
-  onMounted( async () => {
-    recipes.value = await Backend.fetchRecipes();
-    loading.value = false;
+    servings: null,
+    prepTime: null,
   });
 
   const ingredient = ref('');
@@ -52,27 +52,37 @@
   };
 
   const decrementQuantity = (index) => {
+    console.log(recipe.ingredients[index].quantity);
     if (recipe.ingredients[index].quantity > 1) {
       recipe.ingredients[index].quantity--;
     }
   };
 
   const saveRecipe = async () => {
+    loading.value = true;
     await Backend.saveRecipe(recipe);
-    recipes.value = await Backend.fetchRecipes();
     toggleCreateRecipeForm();
+    loading.value = false;
   };
 
   const toggleCreateRecipeForm = () => {
     showCreateRecipeForm.value = !showCreateRecipeForm.value;
   };
+
+  const handleValue = (val) => {
+    if(val < 0) {
+      if(recipe.prepTime == val) recipe.prepTime = 0;
+      if(recipe.servings == val) recipe.servings = 0;
+    }
+  }
 </script>
 
 <template>
   <div>
     <Header title="recipes"/>
-    <div v-if="!loading" class="wrapper">
+    <div class="wrapper">
       <div class="recipes">
+	<button v-if="!showCreateRecipeForm" class="submit-button" @click="toggleCreateRecipeForm">Create Recipe</button>
 	<div v-if="showCreateRecipeForm">
 	  <form @submit.prevent="saveRecipe">
 	  <label for="title">Title:</label>
@@ -89,25 +99,29 @@
 	  </div>
 	  <button class="submit-button" @click.prevent="addIngredient">Add Ingredient</button>
 	  <label for="prepTime">Preparation Time (minutes):</label>
-	  <input v-model="recipe.prepTime" type="number" id="prepTime" required />
+	  <input v-model="recipe.prepTime" type="number" id="prepTime" required placeholder="0" @change="handleValue(recipe.prepTime)"/>
 
 	  <label for="servings">Servings:</label>
-	  <input v-model="recipe.servings" type="number" id="servings" required />
+	  <input v-model="recipe.servings" type="number" id="servings" required placeholder="0" @change="handleValue(recipe.servings)"/>
 
-	  <button class="submit-button" type="submit">Save Recipe</button>
+	  <button v-if="!loading" class="submit-button" type="submit">Save Recipe</button>
+	  <button v-else class="submit-button"> 
+	    <font-awesome-icon icon="fa-solid fa-spinner" spin />
+	  </button > 
+	  <button class="submit-button" @click="toggleCreateRecipeForm">Cancel</button>
 	  </form>
 	</div>
 
 	<div v-else-if="recipes.length === 0">No recipes yet. Create one now!</div>
 
-	<div v-else >
-	  <div v-for="(recipe, index) in recipes" :key="index" class="recipe-card" @click="viewRecipeDetails(index)">
+	<div v-else>
+	  <div v-for="(recipe, index) in recipes.documents" :key="index" class="recipe-card" @click="viewRecipeDetails(index)">
 	    <h4 class="title">{{ recipe.id }}</h4>
 	    <p>Prep Time: {{ recipe.data.prepTime }} minutes</p>
 	    <p>Servings: {{ recipe.data.servings }}</p>
 	  </div>
-	  <button class="submit-button" @click="toggleCreateRecipeForm">Create Recipe</button>
 	</div>
+
       </div>
     </div>
     <Footer />
@@ -217,6 +231,7 @@
     cursor: pointer;
     font-size: 18px;
     transition: background-color 0.3s;
+    margin-top:10px;
   }
 
   p {
