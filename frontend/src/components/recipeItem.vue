@@ -15,12 +15,17 @@
   const day = title.slice(1);
   const recipe = ref(props.data.data.recipe);
   const cook = ref(props.data.data.cook);
-  const selectedRecipe = ref(props.recipes[0].id);
+  const selectedRecipe = ref(props.recipes.documents[0].id);
   const editMode = ref(false);
+  const loading = ref(false);
 
   const save = async () => {
-    editMode.value = !editMode.value;
+    loading.value = true;
     let success = await Backend.saveCalendar(title, selectedRecipe.value, cook.value);
+    recipe.value = selectedRecipe.value;
+    cook.value = "you";
+    loading.value = false;
+    editMode.value = !editMode.value;
     if(success) {
       recipe.value = selectedRecipe.value;
       cook.value = "you";
@@ -38,9 +43,12 @@
 	<option selected disabled>{{ recipe }}</option>
       </select>
       <select v-else v-model="selectedRecipe">
-	<option v-for="recipe in recipes" :key="recipe.id" :value="recipe.id" @change="recipeChange">{{ recipe.id }}</option>
+	<option v-for="recipe in recipes.documents" :key="recipe.id" :value="recipe.id" @change="recipeChange">{{ recipe.id }}</option>
       </select>
-      <button v-if="!editMode" @click="editMode = !editMode">Edit</button>
+      <button v-if="loading"> 
+	    <font-awesome-icon icon="fa-solid fa-spinner" spin />
+      </button > 
+      <button v-else-if="!editMode" @click="editMode = !editMode">Edit</button>
       <button v-else @click="save">Save</button>
     </div>
     <p class="servings">Cook : {{ cook }} </p>

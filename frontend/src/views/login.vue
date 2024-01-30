@@ -18,11 +18,8 @@
     load: false
   });
 
-
   onMounted( async () => {
-    if(await Backend.isAuth()) {
-      router.push( { name: "home" });
-    }
+    await Backend.isAuth();
     loading.value = false;
   });
 
@@ -31,7 +28,6 @@
       page.load = true;
       validateInput();
       await Backend.login(email.value, password.value, page.action);
-      router.push( { name: "home" });
     } catch (e) {
       page.load = false;
       err.value = e;

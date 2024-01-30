@@ -6,18 +6,11 @@
   import * as Backend from '../composables/backend.js';
 
   const router = useRouter();
-  const loading = ref(true);
-  const user = ref();
-
-  onMounted(async () => {
-    user.value = await Backend.fetchUser();
-    loading.value = false;
+  const props = defineProps({
+    data: Object
   });
 
-  const signout = () => {
-    Backend.removeAccessToken();
-    router.push( { name: 'login' });
-  }
+  const user = props.data.user;
 
 </script>
 
@@ -25,9 +18,9 @@
   <Header />
   <div>
     <Header title="Home"/>
-    <div v-if="!loading" class="wrapper">
+    <div class="wrapper">
       <div class="content">
-	<button class="submit-button" @click="signout()">sign out</button>
+	<button class="submit-button" @click="Backend.removeUser()">sign out</button>
 	<p> {{ user.name }} </p>
 	<p> {{ user.email }} </p>
       </div>
