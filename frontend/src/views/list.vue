@@ -9,32 +9,14 @@
     data: Object,
   });
 
-  const loading = ref(true);
-  const ingredients = ref([]);
-  const list = ref();
-
-  onMounted( async () => {
-    const recipes = props.data.list.documents;
-    const ingredientsMap = new Map();
-
-    recipes.forEach(recipe => {
-      recipe.ingredients.forEach(({ name, quantity }) => {
-        const existingQuantity = ingredientsMap.get(name) || 0;
-        ingredientsMap.set(name, existingQuantity + quantity);
-      });
-    });
-
-    const list = Array.from(ingredientsMap).map(([name, quantity]) => ({ name, quantity }));
-    ingredients.value = list;
-    loading.value = false;
-  });
+  const list = props.data.list.documents;
 
 </Script>
 <template>
   <div>
     <Header title="the list"/>
-    <div v-if="!loading" class="wrapper">
-      <IngredientItem v-for="(item, index) in ingredients" :key="index" :ingredient=item />
+    <div class="wrapper">
+      <IngredientItem v-for="(item, index) in list" :key="index" :ingredient=item />
     </div>
     <Footer />
   </div>

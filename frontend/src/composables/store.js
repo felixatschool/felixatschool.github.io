@@ -48,35 +48,12 @@ const calendar_obj = reactive({
 const list_obj = reactive({
   documents: [
     {
-      recipe: "pizza",
-      ingredients: [
-	{
-	  name: "mushroom",
-	  quantity: 2,
-	  tag: null
-	},
-	{
-	  name: "green pepper",
-	  quantity: 1,
-	  tag: null
-	}
-      ]
-    },
-    {
-      recipe: "lasagna",
-      ingredients: [
-	{
-	  name: "cheese",
-	  quantity: 1,
-	  tag: null
-	},
-	{
-	  name: "green pepper",
-	  quantity: 2,
-	  tag: null
-	}
-      ]
-    },
+      id: "tomato",
+      note: null,
+      order: null,
+      owned: 0,
+      required: 2
+    }
   ]
 });
 

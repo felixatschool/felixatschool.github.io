@@ -150,14 +150,14 @@ export const fetchTheList = async () => {
     const token = Store.getAccessToken();
     if(token) {
       const resp = await axios.get(
-	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/getTheList',
+	'https://northamerica-northeast1-upbeat-aspect-410421.cloudfunctions.net/updateList',
 	{
 	  headers: { Authorization: `${token}`}
 	}
       );
       
       if(resp.status == 200) {
-	Store.setList(resp.data.ingredientsList);
+	Store.setList(resp.data.updatedList);
       } else {
 	throw 'error';
       }

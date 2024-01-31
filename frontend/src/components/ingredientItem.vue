@@ -3,15 +3,17 @@
     ingredient: Object
   });
 
-  const name = props.ingredient.name;
-  const quantity = props.ingredient.quantity;
+  const name = props.ingredient.id;
+  const required = props.ingredient.required;
+  const order = props.ingredient.order;
+  const note = props.ingredient.note;
 </script>
 
 <template>
   <li>
     <div class="card">
       <h3 class="title">{{ name }}</h3>
-      <p class="quantity">Quantity: {{ quantity }}</p>
+      <p class="quantity">Required: {{ required }}</p>
     </div>
   </li>
 </template>
