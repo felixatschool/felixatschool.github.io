@@ -12,3 +12,11 @@
     <RouterView :data="data" />
   </div>
 </template>
+
+<style>
+  @media (prefers-color-scheme: dark) {
+    * {
+      color:#bbb;
+    }
+  }
+</style>

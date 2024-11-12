@@ -64,19 +64,17 @@
         <input type="text" v-model="email" required placeholder="email"/>
         <input type="password" v-model="password" required placeholder="password"/>
       </form>
-        <button v-if="!page.load" @click="login()"> {{ page.action }} </button>
-        <button v-else> 
-	  <font-awesome-icon icon="fa-solid fa-spinner" spin />
-        </button > 
-        <div class="action"> <h4 @click="toggleMode()" class="mode"> {{ page.btn }} </h4> </div>
+      <button v-if="!page.load" @click="login()"> {{ page.action }} </button>
+      <button v-else>
+        <font-awesome-icon icon="fa-solid fa-spinner" spin />
+      </button>
+      <div class="action"> <h4 @click="toggleMode()" class="mode"> {{ page.btn }} </h4> </div>
     </div>
   </div>
 </template>
 
 <style scoped>
   .login-container {
-    display:flex;
-    justify-content:center;
     width:100vw;
     height:90vh;
   }
@@ -101,10 +99,6 @@
     font-size:0.9rem;
   }
 
-  .action {
-    width:100%;
-  }
-
   .mode {
     position:absolute;
     bottom:10%;
@@ -126,6 +120,7 @@
     border-radius: 16px;
     margin:3px auto;
     text-align:center;
+    font-size:16px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
@@ -140,6 +135,19 @@
     color: #fff;
     cursor: pointer;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-    font-size:0.9rem;
+    font-size:16px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    h2 {
+      color:#0071C5;
+    }
+    button {
+      background-color:#0071C5;
+    }
+    input {
+      background-color:#2A2A2A;
+      border:1px solid #2A2A2A;
+    }
   }
 </style>

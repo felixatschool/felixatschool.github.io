@@ -10,12 +10,11 @@
     recipes: Object
   });
 
-
   const title = props.data.id;
   const day = title.slice(1);
   const recipe = ref(props.data.data.recipe);
   const cook = ref(props.data.data.cook);
-  const selectedRecipe = ref(props.recipes.documents[0].id);
+  const selectedRecipe = ref(props.recipes.documents[0]?.id);
   const editMode = ref(false);
   const loading = ref(false);
 
