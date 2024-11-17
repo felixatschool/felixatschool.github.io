@@ -1,7 +1,8 @@
 <script setup>
-  import { watch } from 'vue'
-  import { RouterView } from 'vue-router'
-  import Login from './views/login.vue'
+  import { watch } from 'vue';
+  import { RouterView } from 'vue-router';
+  import Login from './views/login.vue';
+  import Footer from './components/footer.vue';
   import * as Store from './composables/store.js';
   const data = Store.getData();
 </script>
@@ -10,6 +11,7 @@
   <Login v-if="data.user.token == null"/>
   <div v-else>
     <RouterView :data="data" />
+    <Footer />
   </div>
 </template>
 

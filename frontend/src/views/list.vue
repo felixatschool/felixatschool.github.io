@@ -2,7 +2,6 @@
   import { ref, reactive, onMounted } from 'vue';
   import * as Backend from '../composables/backend.js';
   import Header from '../components/header.vue'
-  import Footer from '../components/footer.vue'
   import IngredientItem from '../components/ingredientItem.vue'
 
   const props = defineProps({
@@ -36,7 +35,6 @@
     <div v-if="!loading" class="wrapper">
       <IngredientItem v-for="(item, index) in ingredients" :key="index" :ingredient=item />
     </div>
-    <Footer />
   </div>
 </template>
 

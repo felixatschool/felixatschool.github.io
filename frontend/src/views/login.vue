@@ -69,6 +69,7 @@
         <font-awesome-icon icon="fa-solid fa-spinner" spin />
       </button>
       <div class="action"> <h4 @click="toggleMode()" class="mode"> {{ page.btn }} </h4> </div>
+      <p class="version"> v1.3.2 </p>
     </div>
   </div>
 </template>
@@ -88,6 +89,13 @@
 
   h4 {
     cursor:pointer;
+  }
+
+  .version {
+    position:absolute;
+    bottom:0;
+    right:0;
+    font-size:8px;
   }
 
   .err {

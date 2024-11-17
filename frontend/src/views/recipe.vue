@@ -3,7 +3,6 @@
   import { useRouter } from 'vue-router';
   import * as Backend from '../composables/backend.js';
   import Header from '../components/header.vue'
-  import Footer from '../components/footer.vue'
 
   const props = defineProps({
     data: Object,
@@ -124,7 +123,6 @@
 
       </div>
     </div>
-    <Footer />
   </div>
 </template>
 

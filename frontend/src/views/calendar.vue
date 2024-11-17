@@ -2,7 +2,6 @@
   import { ref, reactive, onMounted } from 'vue';
   import * as Backend from '../composables/backend.js';
   import Header from '../components/header.vue'
-  import Footer from '../components/footer.vue'
   import RecipeItem from '../components/recipeItem.vue'
 
   const props = defineProps({
@@ -19,7 +18,6 @@
     <div class="wrapper">
       <RecipeItem v-for="item in calendar" :key="item.id" :data="item" :recipes="recipes"/>
     </div>
-    <Footer />
   </div>
 </template>
 

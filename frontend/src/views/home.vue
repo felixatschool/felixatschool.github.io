@@ -2,7 +2,6 @@
   import { ref, reactive, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import Header from '../components/header.vue'
-  import Footer from '../components/footer.vue'
   import * as Backend from '../composables/backend.js';
 
   const router = useRouter();
@@ -26,7 +25,6 @@
       </div>
     </div>
   </div>
-  <Footer />
 </template>
 
 <style scoped>
