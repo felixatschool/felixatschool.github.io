@@ -125,7 +125,11 @@ export const removeUser = () => {
 }
 
 export const setAccessToken = (token) => {
-  Cookies.set('accessToken', token);
+  Cookies.set('accessToken', token, {
+    secure: true,
+    sameSite: 'None',
+    expires: 31
+  });
 };
 
 export const getAccessToken = () => {
