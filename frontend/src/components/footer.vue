@@ -9,30 +9,21 @@
 
 </script>
 <template>
-  <div class="view">
     <div class="container">
       <h5 @click="goto('recipe')"> recipe </h5>
       <h5 @click="goto('calendar')"> calendar </h5>
       <h5 @click="goto('list')"> list </h5>
     </div>
     <!--<h4> khdr. </h4>-->
-  </div>
 </template>
 
 <style scoped>
-
-  .view {
-    display:block;
-    height:5vh;
-    width:100vw;
-    position:absolute;
-    bottom:35px;
-  }
-
   .container {
+    height:37px;
     width:70%;
-    margin:0 auto;
+    margin:10px auto;
     display:flex;
+    flex-direction:row;
     justify-content: space-evenly;
     padding: 4px;
     border: 2px solid #ccc;

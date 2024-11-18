@@ -56,30 +56,23 @@
 </script>
 
 <template>
-  <div v-if="!loading" class="login-container">
-    <div class="login-box">
-      <h2> {{ page.title }} </h2>
-      <div class="err"> {{ err }} </div>
-      <form @submit.prevent="">
-        <input type="text" v-model="email" required placeholder="email"/>
-        <input type="password" v-model="password" required placeholder="password"/>
-      </form>
-      <button v-if="!page.load" @click="login()"> {{ page.action }} </button>
-      <button v-else>
-        <font-awesome-icon icon="fa-solid fa-spinner" spin />
-      </button>
-      <div class="action"> <h4 @click="toggleMode()" class="mode"> {{ page.btn }} </h4> </div>
-      <p class="version"> v1.3.2 </p>
-    </div>
+  <div v-if="!loading" class="login-box">
+    <h2> {{ page.title }} </h2>
+    <div class="err"> {{ err }} </div>
+    <form @submit.prevent="">
+      <input type="text" v-model="email" required placeholder="email"/>
+      <input type="password" v-model="password" required placeholder="password"/>
+    </form>
+    <button v-if="!page.load" @click="login()"> {{ page.action }} </button>
+    <button v-else>
+      <font-awesome-icon icon="fa-solid fa-spinner" spin />
+    </button>
+    <div class="action"> <h4 @click="toggleMode()" class="mode"> {{ page.btn }} </h4> </div>
+    <p class="version"> v1.3.2 </p>
   </div>
 </template>
 
 <style scoped>
-  .login-container {
-    width:100vw;
-    height:90vh;
-  }
-
   .login-box {
     max-width:420px;
     width:75vw;
