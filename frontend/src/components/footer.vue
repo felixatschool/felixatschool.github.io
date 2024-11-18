@@ -21,7 +21,7 @@
   .container {
     height:37px;
     width:70%;
-    margin:10px auto;
+    margin:0 auto;
     display:flex;
     flex-direction:row;
     justify-content: space-evenly;
